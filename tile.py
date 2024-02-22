@@ -36,14 +36,15 @@ class SnakeBody(TileObject): # this is the other tiles of the player
         TileObject.__init__(self, x, y, [0,255,0], tileArray)
 
         self.direction = direction # the direction the snakes body will go next
+        self.previousDirection = direction # this is useful for not creating errors when making new snake segments
 
         self.child = child
 
     def addBody(self, tileArray): # makes a new body
         if (self.child == None): # if the head doesnt have one it adds it to behind where its going
-            forces = getDirection(self.direction)
+            forces = getDirection(self.previousDirection) # so that the snake creates body parts from where it once was
 
-            self.child = SnakeBody(self.x + -forces[0], self.y + -forces[1], tileArray, self.direction) # makes a new snake body
+            self.child = SnakeBody(self.x + -forces[0], self.y + -forces[1], tileArray, self.previousDirection) # makes a new snake body
 
         else: # otherwise it tells the next bodies to do the same
             if (self.child.direction == "dead"):
@@ -78,6 +79,7 @@ class SnakeBody(TileObject): # this is the other tiles of the player
                     self.child.move(tileArray)
 
                     if (self.child.direction != "dead"): # keeps them dead
+                        self.child.previousDirection = self.child.direction
                         self.child.direction = self.direction # after the child moves in the direction it is supposed to, we set its direction to this ones now, which allows the snake to turn
 
                     else:
@@ -115,10 +117,12 @@ class SnakeHead(SnakeBody): # only one of these SHOULD be made, but ill make a m
 
 apples = []
 class Apple(TileObject):
-    def __init__(self, x, y, tileArray):
-        TileObject.__init__(self, x, y, [255,0,0], tileArray)
+    def __init__(self, tileArray):
+        TileObject.__init__(self, 0, 0, [255,0,0], tileArray)
 
-        self.eaten = False # so that the apple can gets set after the snake is made
+        tileArray[0][0].obj = None # makes sure that we dont place the apples in the top left all the time
+
+        self.eaten = True # so that the apple can gets set after the snake is made
 
         apples.append(self)
 

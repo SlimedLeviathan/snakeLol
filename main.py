@@ -1,6 +1,7 @@
 # the main folder, run the game from here
 
 snakeNum = 1 # change this for more snakes
+appleNum = 5 # change this for more apples
 
 import pygame as pg
 import tile as t
@@ -48,7 +49,8 @@ def startGame(): # does everything needed for the game to start
         for yNum in range(yTileNum):
             tileArray[xNum].append(t.Tile(xNum, yNum))
 
-    t.Apple(4, 2, tileArray)
+    for _ in range(appleNum):
+        t.Apple(tileArray)
 
     for _ in range(snakeNum):
         randX = rand.randint(2, xTileNum - 4) # gives some room
