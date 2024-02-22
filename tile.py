@@ -59,7 +59,7 @@ class SnakeBody(TileObject): # this is the other tiles of the player
         force[0] += self.x
         force[1] += self.y
 
-        if not (self.x >= len(tileArray) - 1 or self.y >= len(tileArray[0]) - 1 or self.x <= 0 or self.y <= 0): # making sure the snake doesnt go outside the bounds of the game
+        if not (force[0] > len(tileArray) - 1 or force[1] > len(tileArray[0]) - 1 or force[0] < 0 or force[1] < 0): # making sure the snake doesnt go outside the bounds of the game
             tile = tileArray[force[0]][force[1]]
 
             if (tile.obj != None): # if there is something on the tile, we do the hit function

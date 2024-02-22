@@ -2,19 +2,22 @@
 
 import pygame as pg
 import tile as t
+import random
 
 pg.init()
 
-xTiles = 10
-yTiles = 10
+rand = random.Random()
 
-screen = pg.display.set_mode((xTiles * 50, yTiles * 50))
+xTileNum = 10
+yTileNum = 10
+
+screen = pg.display.set_mode((xTileNum * 50, yTileNum * 50))
 
 running = True
 started = False # this makes sure the game doesnt start until the player moves
 killed = False
 
-tileArray = [[] for _ in range(xTiles)] # accessing any tile is [x][y]
+tileArray = [[] for _ in range(xTileNum)] # accessing any tile is [x][y]
 
 pg.time.set_timer(pg.USEREVENT + 1, 1) # every milisecond we can get this event
 
@@ -37,19 +40,24 @@ def startGame(): # does everything needed for the game to start
     t.apples.clear()
     t.heads.clear()
 
-    tileArray = [[] for _ in range(xTiles)] # accessing any tile is [x][y]
+    tileArray = [[] for _ in range(xTileNum)] # accessing any tile is [x][y]
 
-    for xNum in range(xTiles):
-        for yNum in range(yTiles):
+    for xNum in range(xTileNum):
+        for yNum in range(yTileNum):
             tileArray[xNum].append(t.Tile(xNum, yNum))
 
     t.Apple(4, 2, tileArray)
 
-    mainhead = t.SnakeHead(4, 4, tileArray)
+    snakeNum = 1
 
-    # adds 2 body parts automatically
-    mainhead.addBody(tileArray)
-    mainhead.addBody(tileArray)
+    for _ in range(snakeNum):
+        randX = rand.randint(2, xTileNum - 4) # gives some room
+        randY = rand.randint(2, yTileNum - 4)
+
+        mainhead = t.SnakeHead(randX, randY, tileArray)
+        # adds 2 body parts automatically
+        mainhead.addBody(tileArray)
+        mainhead.addBody(tileArray)
 
 startGame() # does the first start of the game
 
@@ -63,6 +71,14 @@ while running == True:
             else:
                 pg.draw.rect(screen, tile.obj.color, [tile.x * 50, tile.y * 50, 50, 50]) # draws the main color of the tile
                 pg.draw.rect(screen, [255,255,255], [tile.x * 50, tile.y * 50, 50, 50], 1) # draws the small outline
+
+    killed = True
+    for head in t.heads:
+        if (head.direction != "dead"):
+            killed = False # if even a single snake is alive, it counts it as still alive
+
+    if (killed == True):
+        startGame()
 
     for apple in t.apples:
         if (apple.eaten == True):
